@@ -1,5 +1,5 @@
 # Nolla
-Spartan minimum for backend. There is no "Service containers" or "Factories for creating factories for creating ...". There is no stupid "Query builders" which makes your database engine cry. There are only 3 things you need in each app.
+Spartan minimum for backend. There are no "Service containers" or "Factories for creating factories for creating ...". There are no stupid "Query builders" which makes your database engine cry. There are only 3 things you need in each app.
 
 1. **Router** for bind controllers to desired URLs.
 2. **Request & response abstractions** for properly handling requests and responses as objects.
