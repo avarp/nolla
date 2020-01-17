@@ -97,3 +97,19 @@ $router->addRoute('GET', '/article/{id:\d+}', [
 ```
 
 If you already had 404 error handler defined globally it will be replaced by new one which is defined in routing handler.
+
+## Views
+Each controller has method `loadView` and you can use it like in example below:
+```php
+$html = $this->loadView('my-controller/my-view', $data);
+```
+System will load file from `views/my-controller/my-view.php` and `$data` will be extracted on the view's scope.
+
+## Nested controllers
+Each controller has method `loadController` for calling nested controllers and you can use it like in example below:
+```php
+$html = $this->loadController('Auth::signUpForm');
+```
+
+## Models
+There is no rules for creating models. Feel free to create anything. For provide connection to database you can use `\System\Library\Database` class.
