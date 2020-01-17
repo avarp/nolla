@@ -1,0 +1,20 @@
+AddDefaultCharset utf-8
+Options -Indexes
+DirectorySlash off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteBase /
+
+    # redirect www.example.com to example.com
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ http://%1%{REQUEST_URI} [L,R=301]
+
+    # if requested *.php, *.json
+    RewriteCond %{REQUEST_URI} (.php|.json)$ [OR]
+    # or if file not exists
+    RewriteCond %{REQUEST_FILENAME} !-f
+    # then redirect to index.php
+    RewriteRule ^ index.php [L]
+    # otherwise send requested file
+</IfModule>
