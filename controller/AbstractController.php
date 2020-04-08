@@ -26,6 +26,16 @@ abstract class AbstractController
     }
   }
 
+  public function newController($controller)
+  {
+    $class = '\\Controller\\'.str_replace('/', '\\', $controller);
+    if (class_exists($class)) {
+      return new $class($this->request, $this->response);
+    } else {
+      throw new \InvalidArgumentException("The controller $class does not exist.");
+    }
+  }
+
   protected function setResponseString($string)
   {
     $this->response = $this->response->withBody(
