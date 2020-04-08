@@ -1,5 +1,5 @@
 {
-    "name": "Nolla",
+    "name": "artem/nolla",
     "description": "Spartan minimum for PHP backend.",
     "type": "project",
     "license": "MIT",
