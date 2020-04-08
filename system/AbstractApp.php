@@ -200,22 +200,53 @@ abstract class AbstractApp
 
   public function sendResponse()
   {
+    // Remove all headers, but save them in array
+    $headers = headers_list();
+    header_remove();
+
+    // Set cookies which go from $_COOKIE
+    foreach ($headers as $h) {
+      $p = strpos($h, ':');
+      $name = trim(substr($h, 0, $p));
+      $value = trim(substr($h, $p+1));
+      if (strtolower($name) == 'set-cookie') {
+        $this->response = $this->response->withAddedHeader($name, $value);
+      }
+    }
+
+    // Set cookies for session id
+    if (!isset($_COOKIE['PHPSESSID'])) {
+      $id = session_id();
+      $path = $this->request->getUri()->getPath();
+      $this->response = $this->response->withAddedHeader(
+        'Set-Cookie', "PHPSESSID=$id; path=/"
+      );
+    }
+
+    // Set HTTP status line
     $r = $this->response;
     $http_line = sprintf('HTTP/%s %s %s',
       $r->getProtocolVersion(),
       $r->getStatusCode(),
       $r->getReasonPhrase()
     );
+
+    // Send headers one by one
     header($http_line, true, $r->getStatusCode());
     foreach ($r->getHeaders() as $name => $values) {
+      $values = array_unique($values);
       foreach ($values as $value) {
         header("$name: $value", false);
       }
     }
+
+    // Rewind body stream
     $stream = $r->getBody();
     if ($stream->isSeekable()) {
       $stream->rewind();
     }
+
+    // Send the body
     while (!$stream->eof()) {
       echo $stream->read(1024 * 8);
     }
@@ -228,18 +259,9 @@ abstract class AbstractApp
   }
 
 
-  protected function createRoutingMap($router)
-  {
-    // implement this in \System\App class
-  }
+  protected abstract function createRoutingMap($router);
 
-  protected function defineMiddleware()
-  {
-    // implement this in \System\App class
-  }
+  protected abstract function defineMiddleware();
 
-  protected function defineErrorHandlers()
-  {
-    // implement this in \System\App class
-  }
+  protected abstract function defineErrorHandlers();
 }
