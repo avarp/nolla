@@ -39,10 +39,6 @@ class Page extends AbstractController
    */
   protected function page($body): ResponseInterface
   {
-    Header::addScript('/view/assets/grid.js');
-    Header::addStyle('/view/assets/styles.css');
-    Footer::addScript('/view/assets/app.js');
-
     return $this->textHtml(
       $this->loadController('Header')
       .$body
@@ -55,6 +51,7 @@ class Page extends AbstractController
 
   public function home()
   {
+    Header::setTitle('Nolla');
     return $this->page($this->loadView('home'));
   }
 
@@ -63,6 +60,7 @@ class Page extends AbstractController
 
   public function notFound()
   {
+    Header::setTitle('Error 404');
     return $this->page($this->loadView('404'));
   }
 }
