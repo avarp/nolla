@@ -1,73 +1,153 @@
-<?php
+<?php declare(strict_types=1);
 namespace Controller;
 
+use \Nyholm\Psr7\Factory\Psr17Factory;
+use \Psr\Http\Message\ServerRequestInterface;
+use \Psr\Http\Message\ResponseInterface;
+use \Nyholm\Psr7\Stream;
+use \Nolla\Core\App as NollaCore;
+
+
+/**
+ * Basis for all controllers across the system.
+ * You should develop your controllers extennding this class.
+ */
 abstract class AbstractController
 {
+  /**
+   * @var ServerRequestInterface currentrly processing request
+   */
   protected $request;
-  protected $response;
 
-  public function __construct($request = null, $response = null)
+
+
+
+  /**
+   * Instantiate controller
+   */
+  public function __construct(ServerRequestInterface $request)
   {
     $this->request = $request;
-    $this->response = $response;
   }
 
-  public function loadController($controller)
-  {
-    $a = explode('::', str_replace('/', '\\', $controller));
-    $class = '\\Controller\\'.$a[0];
-    $method = isset($a[1]) ? $a[1] : 'index';
 
+
+
+  /**
+   * Load controller
+   * @param string $controllerPath path to controller and method
+   * @param array $params params passing to method
+   * @return mixed depends on controller
+   */
+  public function loadController(string $controllerPath, array $params=[])
+  {
+    [$class, $method] = NollaCore::parsePath($controllerPath, '\\Controller\\');
     if (class_exists($class) && method_exists($class, $method)) {
-      $instance = new $class($this->request, $this->response);
-      return $instance->$method();
+      $controller = new $class($this->request);
+      return $controller->$method(...$params);
     } else {
       throw new \BadMethodCallException("The controller $class->$method() does not exist.");
     }
   }
 
-  public function newController($controller)
+
+  
+
+  /**
+   * Instantiate another controller
+   * @param string $controllerPath path to controller and method
+   * @return object instance of controller
+   */
+  public function newController(string $controllerPath): object
   {
-    $class = '\\Controller\\'.str_replace('/', '\\', $controller);
+    [$class, $_] = NollaCore::parsePath($controllerPath, '\\Controller\\');
     if (class_exists($class)) {
-      return new $class($this->request, $this->response);
+      return new $class($this->request);
     } else {
       throw new \InvalidArgumentException("The controller $class does not exist.");
     }
   }
 
-  protected function setResponseString($string)
+
+
+
+  /**
+   * Create PSR7 response from string
+   * @param string $string data for a body of a response
+   * @return ResponseInterface PSR7 response
+   */
+  protected function createResponseFromString(string $string): ResponseInterface
   {
-    $this->response = $this->response->withBody(
-      \Nyholm\Psr7\Stream::create($string)
-    );
+    return (new Psr17Factory)
+      ->createResponse(200)
+      ->withBody(
+        Stream::create($string)
+      );
   }
 
-  protected function setResponseText($text)
+
+
+
+  /**
+   * Create PSR7 response from string with MIME-type text/plain
+   * @param string $text data for a body of a response
+   * @return ResponseInterface PSR7 response
+   */
+  protected function textPlain(string $text): ResponseInterface
   {
-    $this->setResponseString($text);
-    $this->response = $this->response->withHeader('Content-type', 'text/plain');
+    return $this->createResponseFromString($text)->withHeader('Content-type', 'text/plain');
   }
 
-  protected function setResponseHtml($html)
+
+
+
+  /**
+   * Create PSR7 response from HTML with MIME-type text/html
+   * @param string $text data for a body of a response
+   * @return ResponseInterface PSR7 response
+   */
+  protected function textHtml(string $html): ResponseInterface
   {
-    $this->setResponseString($html);
-    $this->response = $this->response->withHeader('Content-type', 'text/html');
+    return $this->createResponseFromString($html)->withHeader('Content-type', 'text/html');
   }
 
-  protected function setResponseJson($object)
+
+
+
+  /**
+   * Create PSR7 JSON response from array or object with MIME-type application/json
+   * @param mixed $object any JSON-representable data
+   * @return ResponseInterface PSR7 response
+   */
+  protected function json($object): ResponseInterface
   {
-    $this->setResponseString(json_encode($object));
-    $this->response = $this->response->withHeader('Content-type', 'application/json');
+    return $this->createResponseFromString(json_encode($object))->withHeader('Content-type', 'application/json');
   }
 
-  protected function setResponseJsonp($object, $padding)
+
+
+
+  /**
+   * Create PSR7 JSONP response from array or object with MIME-type application/javascript
+   * @param mixed $object any JSON-representable data
+   * @param string $padding name of function to call on the browser's side
+   * @return ResponseInterface PSR7 response
+   */
+  protected function jsonp($object, string $padding): ResponseInterface
   {
-    $this->setResponseString($padding.'('.json_encode($object).');');
-    $this->response = $this->response->withHeader('Content-type', 'application/javascript');
+    return $this->createResponseFromString($padding.'('.json_encode($object).');')->withHeader('Content-type', 'application/javascript');
   }
 
-  protected function loadView($view, $data)
+
+
+
+  /**
+   * Load view template
+   * @param string $view name of view without extension
+   * @param array $data any variables to be visible in the scope of the view
+   * @return string result of executing template view
+   */
+  protected function loadView(string $view, array $data=[]): string
   {
     ob_start();
     extract($data);

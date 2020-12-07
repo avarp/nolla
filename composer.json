@@ -1,27 +1,24 @@
 {
-    "name": "artem/nolla",
-    "description": "Spartan minimum for PHP backend.",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Artem Vorobev",
-            "email": "artem.v.mailbox@gmail.com"
-        }
-    ],
-    "require": {
-        "nikic/fast-route": "^1.3",
-        "nyholm/psr7-server": "^0.4.1",
-        "nyholm/psr7": "^1.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "System\\": "system/",
-            "Middleware\\": "system/middleware/",
-            "System\\Http\\": "system/http/",
-            "System\\Library\\": "system/library/",
-            "Model\\": "model/",
-            "Controller\\": "controller/"
-        }
+  "name": "artem-vorobev/nolla",
+  "description": "Spartan minimum for web development",
+  "type": "project",
+  "license": "MIT",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Artem Vorobev",
+      "email": "artem.v.mailbox@gmail.com"
     }
+  ],
+  "require": {
+    "artem-vorobev/nolla-core": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "System\\": "System/",
+      "Model\\": "Model/",
+      "Controller\\": "Controller/"
+    },
+    "files": ["System/helpers.php"]
+  }
 }

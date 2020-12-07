@@ -1,0 +1,2 @@
+Config: Nolla\Core\ConfigFacade
+Log: Nolla\Core\LogFacade

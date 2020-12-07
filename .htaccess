@@ -10,8 +10,8 @@ DirectorySlash off
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^ http://%1%{REQUEST_URI} [L,R=301]
 
-    # if requested *.php, *.json
-    RewriteCond %{REQUEST_URI} (.php|.json)$ [OR]
+    # if requested php script or yaml config
+    RewriteCond %{REQUEST_URI} (.php|.yaml)$ [OR]
     # or if file not exists
     RewriteCond %{REQUEST_FILENAME} !-f
     # then redirect to index.php
