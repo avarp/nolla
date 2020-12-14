@@ -25,29 +25,30 @@ The basic Nolla project consists of 18 (!) files:
 
 ```
 nolla
-├── Controller   place for controllers
-│   ├── AbstractController.php   basic class for building controllers
-│   ├── Footer.php   controller displaying footer
-│   ├── Header.php   controller displaying header
-│   └── Page.php   front controller returning the HTML page
-├── Model   place for your models
-├── System   place where system things are
-│   ├── configs   place for YAML configs for your app
-│   │   └── aliases.yaml   short names for globally used classes
-│   ├── App.php   the main class of app. It describes routing, error handlers and middleware
-│   └── helpers.php   you can put any useful function here
-├── view   place for views
-│   ├── 404.php   example of the 404 page
-│   ├── footer.php   example of the footer
-│   ├── header.php   example of the header
-│   └── home.php   example of the homepage
-├── .gitignore
-├── .htaccess
-├── LICENSE
-├── README.md   file you're reading right now
-├── composer.json   dependencies of the project. You can edit it.
-├── composer.lock   Composer's lock-file. You should not edit it, but should commit it.
-└── index.php   the entry point
+├── Controller                  place for controllers
+│   ├── AbstractController.php  basic class for building controllers
+│   ├── Footer.php              controller displaying footer
+│   ├── Header.php              controller displaying header
+│   └── Page.php                front controller returning the HTML page
+├── Model                       place for your models
+├── System                      place where system things are
+│   ├── configs                 place for YAML configs for your app
+│   │   └── aliases.yaml        short names for globally used classes
+│   ├── App.php                 the main class of app
+│   └── helpers.php             you can put any useful function here
+├── view                        place for views
+│   ├── 404.php                 example of the 404 page
+│   ├── footer.php              example of the footer
+│   ├── header.php              example of the header
+│   └── home.php                example of the homepage
+├── .gitignore                  -
+├── .htaccess                   -
+├── LICENSE                     -
+├── README.md                   file you're reading right now
+├── composer.json               dependencies of the project. You can edit it.
+├── composer.lock               Composer's lock-file. You should not edit it, but should commit it.
+└── index.php                   the entry point
+
 ```
 
 With this structure you already able to build your web app with:
@@ -240,21 +241,9 @@ protected function defineErrorHandlers()
   ];
 }
 ```
-Syntax for error handlers is the same as for string routing handlers.
 
-**Advanced routing**. As it mentioned above, you can define middleware and error handlers for each route separately. Use array form of routing handler. For example:
 
-```php
-$router->addRoute('GET', '/article/{id:\d+}', [
-  'controller' => 'Articles::getById',
-  'middleware' => ['System\Middleware\RedirectFromId123To124'],
-  'errorHandlers' => [
-    404 => 'Articles::articleNotFound'
-  ]
-]);
-```
 
-If you already had 404 error handler defined globally it will be replaced by new one which is defined in routing handler.
 
 ## Views
 Each controller has method `loadView` and you can use it like in example below:
@@ -263,11 +252,17 @@ $html = $this->loadView('my-controller/my-view', $data);
 ```
 System will load file from `views/my-controller/my-view.php` and `$data` will be extracted on the view's scope.
 
+
+
+
 ## Nested controllers
 Each controller has method `loadController` for calling nested controllers and you can use it like in example below:
 ```php
 $html = $this->loadController('Auth::signUpForm');
 ```
+
+
+
 
 ## Models
 There is no rules for creating models. Feel free to create anything.
