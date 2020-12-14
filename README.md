@@ -7,28 +7,138 @@ Spartan minimum for backend. There are no "Service containers" or "Factories for
 
 This project provides only this 3 things and makes them work together. I used [PSR7](https://www.php-fig.org/psr/psr-7) implementation ([nyholm/psr7](https://github.com/Nyholm/psr7)) as request and response abstraction layer and router from Laravel ([nikic/fast-route](https://github.com/nikic/FastRoute)).
 
-## MVC
+
+
+
+## Installation
+
+1. Set up local server with PHP > 7.1
+2. Clone this repo
+3. Run `composer install`
+
+
+
+
+## Structure
+
+The basic Nolla project consists of 18 (!) files:
+
+```
+nolla
+├── Controller   place for controllers
+│   ├── AbstractController.php   basic class for building controllers
+│   ├── Footer.php   controller displaying footer
+│   ├── Header.php   controller displaying header
+│   └── Page.php   front controller returning the HTML page
+├── Model   place for your models
+├── System   place where system things are
+│   ├── configs   place for YAML configs for your app
+│   │   └── aliases.yaml   short names for globally used classes
+│   ├── App.php   the main class of app. It describes routing, error handlers and middleware
+│   └── helpers.php   you can put any useful function here
+├── view   place for views
+│   ├── 404.php   example of the 404 page
+│   ├── footer.php   example of the footer
+│   ├── header.php   example of the header
+│   └── home.php   example of the homepage
+├── .gitignore
+├── .htaccess
+├── LICENSE
+├── README.md   file you're reading right now
+├── composer.json   dependencies of the project. You can edit it.
+├── composer.lock   Composer's lock-file. You should not edit it, but should commit it.
+└── index.php   the entry point
+```
+
+With this structure you already able to build your web app with:
+- advanced routing system
+- PSR7 support
+- any middleware you want
+- static facades
+- MVC architecture
+
 This framework implements MVC paradigm. Structure is clear and straightforward. Models are placed in folder `Model` and should be defined in namespace `\Model`. Controllers - in folder `Controller` and in namespace `\Controller`. Your conrollers should extend `\Controller\AbstractController` class. Views - in folder `view`. I deliberately chosen plain PHP for templating. We are all smart guys and will never put SQL queries or buisness logic inside templates.
 
-## How to build an app
-There is an abstract class you should extend. This is class `\Nolla\Core\App`. You should implement 3 static methods:
+
+
+
+## Request handling
+Core of the app is written in functional style and in index.php you can see main request handling chain:
+
+```php
+<?php
+require('vendor/autoload.php');
+use \System\App;
+
+App::sendHttpResponse(
+  App::processHttpRequest(
+    App::httpRequestFromGlobals()
+  )
+);
+```
+
+It means that App:
+1. Creates PSR7 request object from PHP's global values like `$_SERVER`.
+2. Convert request to response object which also is PSR7-compatible.
+3. Sends response to the client.
+
+This architecture allows you to organize integration tests easily and straightforward:
+
+```php
+
+// construct $request with any PSR7 library
+
+$response = App::processHttpRequest($request);
+
+// grap response and make assertions
+```
+
+`App::sendHttpResponse` method clears all HTTP headers before sending so you can be sure that only headers that present in response object will be sent.
+
+
+
+
+## What is inside the System/App.php
+There is a class extending `\Nolla\Core\App`. You should implement 3 static methods:
 
 1. `createRoutingMap`
 2. `defineMiddleware`
 3. `defineErrorHandlers`
 
-As an example you may use file `System/App.php`. After your app class is ready you can launch your app.
+As an example you may use file `System/App.php`. Here you need to understand some terms:
 
-## Routing, middleware and error handlers
+*Routing*. Is literally process of matching the URL we received to one of the patterns we've defined in the method `createRoutingMap`. Result of this process is the _route_.
+
+*Route*. It is object, which can have 2 states: found and not found. If it has "found" state it also has details of the found route:
+1. Controller _string_
+2. Parameters _array_
+3. Error handlers _array_
+4. Array of middlewares _array_
+In the "not found" state there is no such data at all.
+
+*Controller*. Is class defined in namespace `\Controller` and responsible for creating response. Controller mentioned in Route object should return PSR7 response. Other nested controllers can return anything. Across the system controllers always are presented by a _class path_.
+
+*Class path*. Is string declaring which method of which class system should call. It has format [path/]class[::method]. Path should use "/" symbol for delimiter. If method will be omitted method `index` will be called. Path may be relative. For example, for controllers we don't write "Controller/..." because there is only one namespace for them. Example 1. Controller's path "Pages/Admin::login" points to method `login` of class `\Controller\Pages\Admin` from file `Controller/Pages/Admin.php`. It depends on context in which namespace system will search for the path.
+
+*Error handler* . Is a controller which will be called when particular HTTP 4xx error will be thrown.
+
+*Middleware*. Is a class which has special methods affecting on the system's workflow. Middleware can affect on routing, modify response and request.
+
+
+
+
+## More about routing
 Method `createRoutingMap` receives one parameter - the Router object. In most cases you should provide method, URI pattern and handler for create route. About first two parameters you can read [here](https://github.com/nikic/FastRoute).
 
-**Routing handler** can be a string or array. Let's see on example of simple route definition. This route responses on URL `/article/...` and receives ID of aricle as parameter.
+**Routing handler** can be a string or array. Let's see an example of simple route definition. This route responses on URL `/article/...` and receives ID of aricle as parameter.
 
 ```php
 $router->addRoute('GET', '/article/{id:\d+}', 'Articles::getById');
+#                                             ^^^^^^^^^^^^^^^^^^^
+#                                             this is routing handler
 ```
 
-In this case _routing hangler_ is a string, and system will use it for call method `getById` from class `\Controller\Articles` which shoud be defined in file `controller/Articles.php`. If you define routing handler without method system will call method `index`. System expects that your controller will return correct PSR7 response. Each controller have access to request object by `$this->request` property.
+In this case _routing hangler_ is a class path string, and system will use it for call method `getById` from class `\Controller\Articles` which shoud be defined in file `Controller/Articles.php`. System expects that your controller will return correct PSR7 response. Each controller have access to request object by `$this->request` property.
 
 System will call your controller so that you'll automatically get parameters fetched from URL by router:
 
@@ -42,14 +152,34 @@ class Articles extends AbstractController
 }
 ```
 
-**Middleware** is specific class which can perform some actions on a different stages of request handling. It can affects on request and response objects. There is 3 method names reserved for this.
+The second example shows how to define routing handler using array. With this syntax you can define middleware and error handlers for each route separately.
 
-1. `onStartup` If in your middleware you've defined this method, it will be called rigth after system start (before routing). It accepts PSR7 request object and _may_ return request object which will substitute received one. Any other return values will be ignored.
-2. `beforeRouting` This method can substitute the whole routing process. It accepts request object. It may return an instance of `Nolla\Core\Route`. If route will be non-empty system will not perform routing at all but will call controller defined in the returned route object.
-2. `afterRouting` Method will be called after routing (only if it was performed by system). It accepts request and route objects. It can substitute result of routing returning own Route object.
-3. `onResponseCreated` Method will be called after all controllers. It accepts request, response and route. If it returns PSR7 response object it will substitute received one. Any other return values will be ignored.
+```php
+$router->addRoute('GET', '/article/{id:\d+}', [
+  'controller' => 'Articles::getById',
+  'middleware' => ['System\Middleware\RedirectFromId123To124'],
+  'errorHandlers' => [
+    404 => 'Articles::articleNotFound'
+  ]
+]);
+```
 
-Your own middleware should be placed in `System/Middleware`. You can define middleware globally or only for desired route. Global definition should be described in `defineMiddleware` method of your app class. For example:
+If you already had 404 error handler defined globally it will be replaced by new one which is defined in routing handler. Middleware you defined also will be used.
+
+
+
+
+## Middleware
+Middleware is specific class which can perform some actions on a different stages of request handling. It can affects on request and response objects. There is 3 method names reserved for this.
+
+| Method              | Will be called...                                            | Parameters                                          | Result                |
+| ------------------- | ------------------------------------------------------------ | --------------------------------------------------- | --------------------- |
+| `onStartup`         | ...rigth after system start  and before routing. Result, if it is PSR7 request, will substitute request which system had before. | 1. PSR7 request                                     | PSR7 request or null  |
+| `beforeRouting`     | ...before routing. If it returns Route in state "found" sustem will use this route and will not perform routing at all. | 1. PSR7 request                                     | Route or null         |
+| `afterRouting`      | ...after routing, if the system performed one. If it returns Route in state "found" sustem will use it. | 1. PSR7 request<br />2. Route                       | Route or null         |
+| `onResponseCreated` | ...after all controllers. Returned PSR7 response will be the result of whole request handling process | 1. PSR7 request<br />2. Route<br />3. PSR7 response | PSR7 response or null |
+
+Your own middleware may be placed in namespace `\System\Middleware` in `System/Middleware` folder (you should create it). You can define middleware globally or only for desired route. Global definition should be described in the method `defineMiddleware` of your `\System\App` class:
 
 ```php
 protected function defineMiddleware()
@@ -61,9 +191,37 @@ protected function defineMiddleware()
 }
 ```
 
-In this example system will search for classes `\System\Middleware\MyMiddleware1` and `\Nolla\Core\Middleware\NativeSession`.
+## Tips on middleware usage
 
-**Error handlers** is just controllers, which can handle HTTP errors like 404. There is specific class defined to represent HTTP 4xx errors. This class is `\Nolla\Core\Http\Error4xx`. It is _throwable_, so for making an 404 error in your controller you should use `throw` statement.
+Case 1.
+
+Q: My system expects Authorization header but by default browser adds only cookie.
+
+A: Use `onStartup` method. You will get request and you can read Set-Cookie header and based on this data set desired Authorization header.
+
+Case 2.
+
+Q: I have route which I can't describe within router's syntax.
+
+A: Use `beforeRouting`. You can programmatically detect that you need to display particular page there. Return null of Route dependidng on conditions.
+
+Case 3.
+
+Q: I want that address `/articles/random` displays random article.
+
+A: Use `afterRouting`. You can return a new Route with article ID generated by rand(). It is better to link this middleware only to this route (not globally).
+
+Case 4.
+
+Q: I need to send CORS headers to the client.
+
+A: Use `onResponseCreated` for adding headers to the response and `onStartup` method for handling pre-flight request.
+
+
+
+
+## Error handlers
+Error handlers are just controllers, which can handle HTTP errors like 404. There is specific class defined to represent HTTP 4xx errors. This class is `\Nolla\Core\Http\Error4xx`. It is _throwable_, so for making an 404 error in your controller you should use `throw` statement.
 
 ```php
 throw new \Nolla\Core\Http\Error4xx(404);
