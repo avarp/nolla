@@ -68,6 +68,7 @@ Core of the app is written in functional style and in index.php you can see main
 
 ```php
 <?php
+define("ROOT_DIR", __DIR__);
 require('vendor/autoload.php');
 use \System\App;
 
@@ -91,7 +92,7 @@ This architecture allows you to organize integration tests easily and straightfo
 
 $response = App::processHttpRequest($request);
 
-// grap response and make assertions
+// make assertions on $response
 ```
 
 `App::sendHttpResponse` method clears all HTTP headers before sending so you can be sure that only headers that present in response object will be sent.
