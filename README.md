@@ -118,11 +118,11 @@ As an example you may use file `System/App.php`. Here you need to understand som
 4. Array of middlewares _array_
 In the "not found" state there is no such data at all.
 
-*Controller*. Is class defined in namespace `\Controller` and responsible for creating response. Controller mentioned in Route object should return PSR7 response. Other nested controllers can return anything. Across the system controllers always are presented by a _class path_.
+*Controller*. Is class responsible for creating response. It is recommended to define it in namespace `\Controller`. Controller mentioned in Route object which will be called first should return PSR7 response. Other nested controllers can return anything. Across the system controllers always are presented by a _class path_.
 
-*Class path*. Is string declaring which method of which class system should call. It has format [path/]class[::method]. Path should use "/" symbol for delimiter. If method will be omitted method `index` will be called. Path may be relative. For example, for controllers we don't write "Controller/..." because there is only one namespace for them. Example 1. Controller's path "Pages/Admin::login" points to method `login` of class `\Controller\Pages\Admin` from file `Controller/Pages/Admin.php`. It depends on context in which namespace system will search for the path.
+*Class path*. Is string declaring which method of which class system should call. It has format [path/]class[::method]. Path should use "/" symbol for delimiter. If method will be omitted method `index` will be called. If path starts with "/" it is absolute path. Otherwise it is relative and system will resolve it depending on situation. For example, for controllers you can omit "/Controller/..." because there is only one namespace for them. Controller's path "Pages/Admin::login" points to method `login` of class `\Controller\Pages\Admin` from file `Controller/Pages/Admin.php`.
 
-*Error handler* . Is a controller which will be called when particular HTTP 4xx error will be thrown.
+*Error handler*. Is a controller which will be called when particular HTTP 4xx error will be thrown.
 
 *Middleware*. Is a class which has special methods affecting on the system's workflow. Middleware can affect on routing, modify response and request.
 
@@ -172,7 +172,7 @@ If you already had 404 error handler defined globally it will be replaced by new
 
 
 ## Middleware
-Middleware is specific class which can perform some actions on a different stages of request handling. It can affects on request and response objects. There is 3 method names reserved for this.
+Middleware is specific class which can perform some actions on a different stages of request handling. It can affects on request and response objects. There are 4 method names reserved for this.
 
 | Method              | Will be called...                                            | Parameters                                          | Result                |
 | ------------------- | ------------------------------------------------------------ | --------------------------------------------------- | --------------------- |
@@ -181,14 +181,14 @@ Middleware is specific class which can perform some actions on a different stage
 | `afterRouting`      | ...after routing, if the system performed one. If it returns Route in state "found" sustem will use it. | 1. PSR7 request<br />2. Route                       | Route or null         |
 | `onResponseCreated` | ...after all controllers. Returned PSR7 response will be the result of whole request handling process | 1. PSR7 request<br />2. Route<br />3. PSR7 response | PSR7 response or null |
 
-Your own middleware may be placed in namespace `\System\Middleware` in `System/Middleware` folder (you should create it). You can define middleware globally or only for desired route. Global definition should be described in the method `defineMiddleware` of your `\System\App` class:
+By default system search for middleware in the namespace `\System\Middleware` in `System/Middleware` folder (you should create it). You can define middleware globally or only for desired route. Global definition should be described in the method `defineMiddleware` of your `\System\App` class:
 
 ```php
 protected function defineMiddleware()
 {
   return [
-    'System/Middleware/MyMiddleware1',
-    'Nolla/Core/Middleware/NativeSession'
+    'MyMiddleware1',
+    '/Nolla/Core/Middleware/NativeSession'
   ];
 }
 ```

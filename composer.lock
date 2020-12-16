@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "de2597dd158daebbfe868b14c3c94a89",
+    "content-hash": "431d8d85d13e93c2b78e1741b7490a29",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -61,16 +61,16 @@
         },
         {
             "name": "avarp/nolla-core",
-            "version": "1.1.3",
+            "version": "0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/avarp/nolla-core.git",
-                "reference": "4f7f2ffdfe2cfa50004359789fd164ba1da8c5ad"
+                "reference": "00362b76aa8fbf0741346c389e909bd3f347cdae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/avarp/nolla-core/zipball/4f7f2ffdfe2cfa50004359789fd164ba1da8c5ad",
-                "reference": "4f7f2ffdfe2cfa50004359789fd164ba1da8c5ad",
+                "url": "https://api.github.com/repos/avarp/nolla-core/zipball/00362b76aa8fbf0741346c389e909bd3f347cdae",
+                "reference": "00362b76aa8fbf0741346c389e909bd3f347cdae",
                 "shasum": ""
             },
             "require": {
@@ -107,9 +107,9 @@
             "description": "Core classes for Nolla system",
             "support": {
                 "issues": "https://github.com/avarp/nolla-core/issues",
-                "source": "https://github.com/avarp/nolla-core/tree/v1.1.3"
+                "source": "https://github.com/avarp/nolla-core/tree/v0.1.3"
             },
-            "time": "2020-12-14T15:25:39+00:00"
+            "time": "2020-12-16T05:23:02+00:00"
         },
         {
             "name": "avarp/phpt",
