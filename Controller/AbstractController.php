@@ -2,7 +2,7 @@
 namespace Controller;
 
 use \Nyholm\Psr7\Factory\Psr17Factory;
-use \Psr\Http\Message\ServerRequestInterface;
+use \Psr\Http\Message\RequestInterface;
 use \Psr\Http\Message\ResponseInterface;
 use \Nyholm\Psr7\Stream;
 use \Nolla\Core\App as NollaCore;
@@ -15,7 +15,7 @@ use \Nolla\Core\App as NollaCore;
 abstract class AbstractController
 {
   /**
-   * @var ServerRequestInterface currentrly processing request
+   * @var RequestInterface currentrly processing request
    */
   protected $request;
 
@@ -25,7 +25,7 @@ abstract class AbstractController
   /**
    * Instantiate controller
    */
-  public function __construct(ServerRequestInterface $request)
+  public function __construct(RequestInterface $request)
   {
     $this->request = $request;
   }

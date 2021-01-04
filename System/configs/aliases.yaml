@@ -1,2 +1,3 @@
 Config: Nolla\Core\ConfigFacade
 Log: Nolla\Core\LogFacade
+App: System\App

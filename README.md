@@ -205,7 +205,7 @@ Case 2.
 
 Q: I have route which I can't describe within router's syntax.
 
-A: Use `beforeRouting`. You can programmatically detect that you need to display particular page there. Return null of Route dependidng on conditions.
+A: Use `beforeRouting`. You can programmatically detect that you need to display particular page there. Return null or Route depending on conditions.
 
 Case 3.
 
@@ -266,4 +266,4 @@ $html = $this->loadController('Auth::signUpForm');
 
 
 ## Models
-There is no rules for creating models. Feel free to create anything.
+There are no rules for creating models. Feel free to create anything.
