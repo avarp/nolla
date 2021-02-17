@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "avarp/nolla-core": "^0.1.5"
+    "avarp/nolla-core": "^0.1.6"
   },
   "autoload": {
     "psr-4": {
