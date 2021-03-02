@@ -113,16 +113,16 @@
         },
         {
             "name": "avarp/phpt",
-            "version": "1.2.3",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/avarp/phpt.git",
-                "reference": "2619bf0d62da4fd1336ef88e0b9f3801fd5ba00d"
+                "reference": "d925eb5171ad8e787b0f8460460a71fba6b43fdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/avarp/phpt/zipball/2619bf0d62da4fd1336ef88e0b9f3801fd5ba00d",
-                "reference": "2619bf0d62da4fd1336ef88e0b9f3801fd5ba00d",
+                "url": "https://api.github.com/repos/avarp/phpt/zipball/d925eb5171ad8e787b0f8460460a71fba6b43fdf",
+                "reference": "d925eb5171ad8e787b0f8460460a71fba6b43fdf",
                 "shasum": ""
             },
             "require-dev": {
@@ -150,9 +150,9 @@
             "description": "Complex strong types and functional features inspired by Haskell and Elm",
             "support": {
                 "issues": "https://github.com/avarp/phpt/issues",
-                "source": "https://github.com/avarp/phpt/tree/v1.2.3"
+                "source": "https://github.com/avarp/phpt/tree/v1.3.0"
             },
-            "time": "2021-02-17T13:04:27+00:00"
+            "time": "2021-03-02T09:32:26+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -3,7 +3,7 @@
   "description": "Spartan minimum for web development",
   "type": "project",
   "license": "MIT",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "authors": [
     {
       "name": "Artem Vorobev",
@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "avarp/nolla-core": "0.1.7"
+    "avarp/nolla-core": "0.1.8"
   },
   "autoload": {
     "psr-4": {
