@@ -8,7 +8,7 @@ Spartan minimum for backend. There are no "Service containers" or "Factories for
 This project provides only these 3 things and makes them work together. I used the [PSR7](https://www.php-fig.org/psr/psr-7) implementation ([nyholm/psr7](https://github.com/Nyholm/psr7)) as request and response abstraction layer and the router from Laravel ([nikic/fast-route](https://github.com/nikic/FastRoute)).
 
 ## MVC
-This framework implements the MVC paradigm. The structure is clear and straightforward. Models are placed into folder `Model` and should be defined in namespace `\Model`. Controllers - in folder `Controller` and in namespace `\Controller`. Your conrollers should extend `the \Controller\AbstractController` class. Views - in folder `view`. I deliberately have chosen plain PHP for templating. We are all smart guys and will never put SQL queries or buisness logic inside templates.
+This framework implements the MVC paradigm. The structure is clear and straightforward. Models are placed into folder `Model` and should be defined in namespace `\Model`. Controllers - in folder `Controller`, in namespace `\Controller` and the name of the class should end with "Controller". Your conrollers should extend `the \Controller\AbstractController` class. Views - in folder `view`. I deliberately have chosen plain PHP for templating. We are all smart guys and will never put SQL queries or buisness logic inside templates.
 
 ## How to build an app
 There is an abstract class you should extend. This is class `\Nolla\Core\App`. You should implement 3 static methods:
@@ -28,12 +28,12 @@ Method `createRoutingMap` receives one parameter - the Router object. In most ca
 $router->addRoute('GET', '/article/{id:\d+}', 'Articles::getById');
 ```
 
-In this case _routing hangler_ is a string, and the system will use it for calling the method `getById` from class `\Controller\Articles`, which shoud be defined in the file `controller/Articles.php`. If you define a routing handler without a method then the system will call method `index`. The system expects that your controller will return a correct PSR7 response. Each controller has access to the request object through the `$this->request` property.
+In this case _routing hangler_ is a string, and the system will use it for calling the method `getById` from class `\Controller\ArticlesController`, which shoud be defined in the file `controller/ArticlesController.php`. If you define a routing handler without a method then the system will call method `index`. The system expects that your controller will return a correct PSR7 response. Each controller has access to the request object through the `$this->request` property.
 
 The system will call your controller so that you'll automatically get parameters fetched from the URL by the router:
 
 ```php
-class Articles extends AbstractController
+class ArticlesController extends AbstractController
 {
   public function getById($id) // System reads this definition and understands that the method expects a parameter with name "id".
   {
@@ -55,8 +55,8 @@ Your own middleware should be placed in `System/Middleware`. You can define midd
 protected function defineMiddleware()
 {
   return [
-    'System/Middleware/MyMiddleware1',
-    'Nolla/Core/Middleware/NativeSession'
+    'MyMiddleware1',
+    '/Nolla/Core/Middleware/NativeSession'
   ];
 }
 ```

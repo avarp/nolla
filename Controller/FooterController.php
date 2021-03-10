@@ -1,7 +1,7 @@
 <?php
 namespace Controller;
 
-class Footer extends AbstractController
+class FooterController extends AbstractController
 {
   protected static $data = [
     'scripts' => []

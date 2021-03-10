@@ -42,6 +42,7 @@ abstract class AbstractController
   public function loadController(string $controllerPath, array $params=[])
   {
     [$class, $method] = NollaCore::parsePath($controllerPath, '\\Controller\\');
+    if (substr($class, -10) != 'Controller') $class .= 'Controller';
     if (class_exists($class) && method_exists($class, $method)) {
       $controller = new $class($this->request);
       return $controller->$method(...$params);

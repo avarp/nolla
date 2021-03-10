@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "216fdd9bcbd90f29c7357ed01453fc87",
+    "content-hash": "47df37fd1e1dce4d038545ec0a0a64d5",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -61,21 +61,21 @@
         },
         {
             "name": "avarp/nolla-core",
-            "version": "0.1.7",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/avarp/nolla-core.git",
-                "reference": "83a69d08d0be136dc0a6897844bc0bc136762584"
+                "reference": "16efd6a2eb6698f8b05ef4a43eceb22555e60f02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/avarp/nolla-core/zipball/83a69d08d0be136dc0a6897844bc0bc136762584",
-                "reference": "83a69d08d0be136dc0a6897844bc0bc136762584",
+                "url": "https://api.github.com/repos/avarp/nolla-core/zipball/16efd6a2eb6698f8b05ef4a43eceb22555e60f02",
+                "reference": "16efd6a2eb6698f8b05ef4a43eceb22555e60f02",
                 "shasum": ""
             },
             "require": {
                 "adbario/php-dot-notation": "^2.2",
-                "avarp/phpt": "^1.2.3",
+                "avarp/phpt": "1.3.0",
                 "monolog/monolog": "^1.25",
                 "nikic/fast-route": "^1.3",
                 "nyholm/psr7": "^1.2",
@@ -107,9 +107,9 @@
             "description": "Core classes for Nolla system",
             "support": {
                 "issues": "https://github.com/avarp/nolla-core/issues",
-                "source": "https://github.com/avarp/nolla-core/tree/v0.1.7"
+                "source": "https://github.com/avarp/nolla-core/tree/v0.2.0"
             },
-            "time": "2021-02-20T15:42:32+00:00"
+            "time": "2021-03-10T10:01:01+00:00"
         },
         {
             "name": "avarp/phpt",

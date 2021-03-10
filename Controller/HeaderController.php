@@ -2,7 +2,7 @@
 namespace Controller;
 
 
-class Header extends AbstractController
+class HeaderController extends AbstractController
 {
   protected static $data = [
     'title' => 'Untitled',
